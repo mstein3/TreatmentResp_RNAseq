@@ -1,0 +1,13 @@
+input_files_eQTL/
+summary_DE_results/
+DE_gemma_InputFiles/
+symlinks_fastq/
+summary_eQTL_results/
+eQTL_scripts/PBS_gemma_scripts_bychr/
+eQTL_scripts/scripts_not_using/
+eQTL_scripts/other_gemma_scripts_bychr/
+eQTL_scripts/Scripts_waiting_to_be_used/
+processing_scripts/star_hg19_leftovers
+processing_scripts/old_or_bad_scripts 
+processing_scripts/input_files_for_scripts
+DE_gemma_scripts/ReverseGemmaScripts

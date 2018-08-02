@@ -1,0 +1,56 @@
+# ------------ qsub parameters -------------------------- #
+#PBS -S /bin/bash
+#PBS -N GeneSNP_list_check
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=16gb
+#PBS -l walltime=8:00:00
+#PBS -o checkGeneSNPList.out
+#PBS -e checkGeneSNPList.err
+
+# --------------- load modules --------------#
+module load gcc
+
+
+
+# -------------- commands ----------------# 
+# Purpose: Check if big GeneSNP lists of all GeneSNP pairs are the same. 
+
+MN_DIR=/scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir
+ML_DIR=/scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir
+FN_DIR=/scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir
+FL_DIR=/scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir
+
+
+MN_FILE=MN_TMMBatch_GeneSNPList.txt 
+ML_FILE=ML_TMMBatch_GeneSNPList.txt  
+FN_FILE=FN_TMMBatch_GeneSNPList.txt   
+FL_FILE=FL_TMMBatch_GeneSNPList.txt
+
+
+if cmp -s "$MN_DIR/$MN_FILE" "$ML_DIR/$ML_FILE" ; then
+   echo "Nothing differs between MN and ML"
+else
+   echo "Something changed between MN and ML"
+fi
+
+
+if cmp -s "$MN_DIR/$MN_FILE" "$FN_DIR/$FN_FILE" ; then
+   echo "Nothing differs between MN and FN"
+else
+   echo "Something changed between MN and FN"
+fi
+
+
+if cmp -s "$MN_DIR/$MN_FILE" "$FL_DIR/$FL_FILE" ; then
+   echo "Nothing differs between MN and FL"
+else
+   echo "Something changed between MN and FL"
+fi
+
+
+#if cmp -s "$oldfile" "$newfile" ; then
+#   echo "Nothing changed"
+#else
+#   echo "Something changed"
+#fi
+

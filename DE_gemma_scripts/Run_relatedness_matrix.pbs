@@ -1,0 +1,25 @@
+
+# ------------ qsub parameters -------------------------- #
+#PBS -S /bin/bash
+#PBS -N relatedness_matrix
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=64gb
+#PBS -l walltime=6:00:00
+#PBS -o relat_mat.out
+#PBS -e relat_mat.err
+
+# --------------- load modules --------------#
+module load gcc
+module load perl
+
+# -------------- run job ----------------# 
+# Command : perl make_relatedness_matrix.pl INPUTFILE OUTPUTFILE KINSHIP
+# In this case: perl make_relatedness_matrix.pl /group/ober-resources/users/mstein3/rna.seq.2017/DE_gemma_InputFiles/FINDIV_only_224HT_list.txt /group/ober-resources/users/mstein3/rna.seq.2017/DE_gemma_InputFiles/NbyN_LPSNull_Kinship_224.txt /group/nicolae-lab/users/mstein3/additive.coef.2015-12-15
+
+
+INPUTFILE=/group/ober-resources/users/mstein3/rna.seq.2017/DE_gemma_InputFiles/FINDIV_only_224HT_list.txt
+OUTPUTFILE=/group/ober-resources/users/mstein3/rna.seq.2017/DE_gemma_InputFiles/NbyN_LPSNull_Kinship_224.txt
+KINSHIP=/group/nicolae-lab/users/mstein3/additive.coef.2015-12-15
+
+perl /group/ober-resources/users/mstein3/rna.seq.2017/DE_gemma_scripts/make_relatedness_matrix.pl $INPUTFILE $OUTPUTFILE $KINSHIP
+

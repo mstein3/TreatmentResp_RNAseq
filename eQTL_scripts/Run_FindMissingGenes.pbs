@@ -1,0 +1,113 @@
+# ------------ qsub parameters -------------------------- #
+#PBS -S /bin/bash
+#PBS -N FindMissingGenes
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=8gb
+#PBS -l walltime=1:00:00
+#PBS -o FindMissingGenes.out
+#PBS -e FindMissingGenes.err
+
+# --------------- load modules --------------#
+module load gcc
+module load R
+
+
+# -------------- commands ----------------# 
+
+# Usage: Rscript Finding_missing_genes_eQTL.R <dir_gemma_covar> <dir_gene_output> <output_prefix>
+# or: 
+# Usage: Rscript Finding_missing_genes_topRes.R <dir_gemma_covar> <dir_gene_output> <output_prefix>
+
+DIR_GENE_OUTPUT=/group/ober-resources/users/mstein3/rna.seq.2017/summary_eQTL_results/MissingGeneList
+
+# Male Null -----------
+#GEMMA_DIR=/scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/covar1
+#OUTPUT_PREFIX=Uncorr_MN
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_eQTL.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_topRes.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+
+#GEMMA_DIR=/scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/batch_covar1
+#OUTPUT_PREFIX=BatchCorr_MN
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_eQTL.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_topRes.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+
+
+#GEMMA_DIR=/scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/sv_covar1
+#OUTPUT_PREFIX=SVCorr_MN_round2
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_eQTL.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_topRes.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+
+#GEMMA_DIR=/scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/TMMbatch
+#OUTPUT_PREFIX=TMMBatch_MN
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_eQTL.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_topRes.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+
+## Male LPS ----------------------
+#GEMMA_DIR=/scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/covar1
+#OUTPUT_PREFIX=Uncorr_ML
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_eQTL.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_topRes.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+
+
+#GEMMA_DIR=/scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/batch_covar1
+#OUTPUT_PREFIX=BatchCorr_ML
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_eQTL.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_topRes.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+
+
+#GEMMA_DIR=/scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/sv_covar1
+#OUTPUT_PREFIX=SVCorr_ML_try2
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_eQTL.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_topRes.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+
+GEMMA_DIR=/scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/TMMbatch
+OUTPUT_PREFIX=TMMBatch_ML
+Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_eQTL.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_topRes.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+
+
+## Female Null ------------------
+#GEMMA_DIR=/scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/covar1
+#OUTPUT_PREFIX=Uncorr_FN
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_eQTL.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_topRes.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+
+
+#GEMMA_DIR=/scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/batch_covar1
+#OUTPUT_PREFIX=BatchCorr_FN_try2
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_eQTL.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_topRes.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+
+
+#GEMMA_DIR=/scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/sv_covar1
+#OUTPUT_PREFIX=SVCorr_FN_try2
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_eQTL.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_topRes.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+
+#GEMMA_DIR=/scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/TMMbatch
+#OUTPUT_PREFIX=TMMBatch_FN
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_eQTL.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_topRes.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+
+## Female LPS ------------------------------
+# GEMMA_DIR=/scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/covar1
+# OUTPUT_PREFIX=Uncorr_FL
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_eQTL.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_topRes.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+
+
+#GEMMA_DIR=/scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/batch_covar1
+#OUTPUT_PREFIX=BatchCorr_FL
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_eQTL.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_topRes.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+
+
+#GEMMA_DIR=/scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/sv_covar1
+#OUTPUT_PREFIX=SVCorr_FL_try2
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_eQTL.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_topRes.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+
+GEMMA_DIR=/scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/TMMbatch
+OUTPUT_PREFIX=TMMBatch_FL
+Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_eQTL.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Finding_missing_genes_topRes.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX

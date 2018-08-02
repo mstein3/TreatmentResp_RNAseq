@@ -1,0 +1,63 @@
+
+# ------------ qsub parameters -------------------------- #
+#PBS -S /bin/bash
+#PBS -N MaxResultPull
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=8gb
+#PBS -l walltime=2:00:00
+#PBS -o MaxResultPull.out
+#PBS -e MaxResultPull.err
+
+# --------------- load modules --------------#
+module load gcc
+module load R
+
+
+# -------------- array info ----------------# 
+INPUT_FILE=$FILE
+
+# Submit Rscript for each 
+while read LINE; 
+do
+    echo "$LINE"
+	DIR_GEMMA=/scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/TMMbatch
+	GENE_SNP_FILE=/group/ober-resources/users/mstein3/rna.seq.2017/summary_eQTL_results/TMMBatchCor_AgeOnlyCovar/GeneSNPList_LargestZ_TMMBatch.txt 
+	echo "Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/MaxResultPull_geneSNP_list.R $LINE $GENE_SNP_FILE $DIR_GEMMA"
+	Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/MaxResultPull_geneSNP_list.R $LINE $GENE_SNP_FILE $DIR_GEMMA
+done < $INPUT_FILE
+
+
+
+
+
+# What the arguments mean: 
+# DIR_GEMMA: Top-level directory to store GEMMA results for each gene.
+# LINE: a gene name
+# GENE_SNP_FILE: a two column file with gene names and a SNP that had the top z score amongst the most significant SNPs/gene within male null, male lps, female null, female LPS
+#
+# GENE_SNP_FILE=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/mash_files/GeneSNPList_SigP_uncorr_0618.txt
+#	DIR_GEMMA=/scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/covar1
+# 	DIR_GEMMA=/scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/covar1
+#   DIR_GEMMA=/scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/covar1
+#   DIR_GEMMA=/scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/covar1
+
+# GENE_SNP_FILE=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/mash_files/GeneSNPList_SigP_batch_0618.txt
+#   DIR_GEMMA=/scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/batch_covar1
+# 	DIR_GEMMA=/scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/batch_covar1
+#   DIR_GEMMA=/scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/batch_covar1
+#   DIR_GEMMA=/scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/batch_covar1
+
+#  GENE_SNP_FILE=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/mash_files/GeneSNPList_SigP_sv.txt
+#	DIR_GEMMA=/scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/sv_covar1
+# 	DIR_GEMMA=/scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/sv_covar1
+#   DIR_GEMMA=/scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/sv_covar1
+#   DIR_GEMMA=/scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/sv_covar1
+
+
+GENE_SNP_FILE=/group/ober-resources/users/mstein3/rna.seq.2017/summary_eQTL_results/TMMBatchCor_AgeOnlyCovar/GeneSNPList_LargestZ_TMMBatch.txt
+#	DIR_GEMMA=/scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/TMMbatch
+#	DIR_GEMMA=/scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/TMMbatch
+#   DIR_GEMMA=/scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/TMMbatch
+#   DIR_GEMMA=/scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/TMMbatch
+
+

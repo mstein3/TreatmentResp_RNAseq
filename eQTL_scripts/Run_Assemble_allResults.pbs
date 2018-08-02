@@ -1,0 +1,28 @@
+# ------------ qsub parameters -------------------------- #
+#PBS -S /bin/bash
+#PBS -N run_assemble_max_val
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=16gb
+#PBS -l walltime=8:00:00
+#PBS -o run_assemble_max_val.out
+#PBS -e run_assemble_max_val.err
+
+# --------------- load modules --------------#
+module load gcc
+module load R
+
+
+# -------------- commands ----------------# 
+
+
+## Purpose: Gather together the topRes files. These are the gemma results from the specific gene-snp pair that had the highest z score across datasets. 
+# Usage:  Assemble_AllResults.R <dir_gemma> <dir_gemma_covar> <analysis_name>
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_AllResults.R /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/TMMbatch MN_TMMBatch
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_AllResults.R /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/TMMbatch FN_TMMBatch
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_AllResults.R /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/TMMbatch ML_TMMBatch
+ Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_AllResults.R /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/TMMbatch FL_TMMBatch
+
+
+
+
+

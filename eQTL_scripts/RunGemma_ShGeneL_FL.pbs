@@ -1,0 +1,117 @@
+
+# ------------ qsub parameters -------------------------- #
+#PBS -S /bin/bash
+#PBS -N gemma_eQTL_perGene_FL
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=16gb
+#PBS -l walltime=28:00:00
+#PBS -o FL_gemma_eQTL_perGene.out
+#PBS -e FL_gemma_eQTL_perGene.err
+
+# --------------- load modules --------------#
+module load gcc
+module load gemma 
+module load R
+module load plink/1.90
+
+# -------------- array info ----------------# 
+INPUT_FILE=$FILE
+
+# Submit Rscript for each 
+while read LINE; 
+do
+    echo "$LINE"
+	COUNTS=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/FemaleSamp_GX/LPS_Female_TMMBatchCor_GX_72018.txt
+	TSS=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/ENSG_files/ENSG_hg19_GeneInfoNoChr_LPSNullRNAseq.txt
+	COVAR=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/FemaleSamp_GX/Female_Age_Covar_12918.txt
+	RELAT=/group/nicolae-lab/users/mstein3/additive.coef.2015-12-15
+	PREFIX_PLINK=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/FemaleSamp_Genos/FemaleSamp_newMAFQC
+	WINDOW=1000000
+	DIR_PHENO=/scratch/mstein3/eQTL_Hutterites/Female_LPS/PhenoDir
+ 	DIR_PLINK=/scratch/mstein3/eQTL_Hutterites/Female_LPS/PlinkDir
+ 	DIR_GEMMA=/scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir
+ 	COVAR_SUBDIR=TMMbatch
+ 	
+	echo "Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Gemma_eQTL_perGene.R  $COUNTS $TSS $COVAR $RELAT $PREFIX_PLINK $WINDOW $LINE $DIR_PHENO $DIR_PLINK $DIR_GEMMA $COVAR_SUBDIR"
+	# Usage: Rscript run_gemma.R <counts> <tss> <covar_file> <relat> <prefix_plink> <window> <gene_name> <dir_pheno> <dir_plink> <dir_gemma> <covar_subdir>
+	Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Gemma_eQTL_perGene.R $COUNTS $TSS $COVAR $RELAT $PREFIX_PLINK $WINDOW $LINE $DIR_PHENO $DIR_PLINK $DIR_GEMMA $COVAR_SUBDIR
+done < $INPUT_FILE
+
+
+
+
+# COUNTS=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/FemaleSamp_GX/LPS_Female_GX_1618.txt
+# COUNTS=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/FemaleSamp_GX/LPS_Female_BatchCor_GX_32318.txt
+# COUNTS=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/FemaleSamp_GX/LPS_Female_SVA_GX_32718.txt
+# COUNTS=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/FemaleSamp_GX/LPS_Female_TMMBatchCor_GX_72018.txt
+
+# COVAR_SUBDIR=TMMbatch
+
+
+
+# What the arguments mean: 
+# COUNTS: quantile normalized, log 2 CPM gene counts
+# TSS: the gene information file
+# PCA: PCs for the gene expression data set in COUNTS 
+# PCA_NUM: Number of PCs you'd like to include
+# RELAT: Relatedness matrix
+# PREFIX_PLINK: prefix of your plink files 
+# WINDOW: size +/- the TSS you want to test for associations, in base pairs. 
+# DIR_PHENO: Top-level directory to save phenotype file for each gene (required to subset PLINK data).
+# DIR_PLINK: Top-level directory to save PLINK files for each gene.
+# DIR_GEMMA: Top-level directory to store GEMMA results for each gene.
+
+#PHENO_NUM="${FILE}"
+#OUTPUT_NAME="${FILE}_output"
+
+# Previously used: 
+#
+# COUNTS=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/FemaleSamp_GX/Resp_Female_GX_1618.txt
+# DIR_PHENO=/scratch/mstein3/eQTL_Hutterites/Female_Resp/PhenoDir
+# DIR_PLINK=/scratch/mstein3/eQTL_Hutterites/Female_Resp/PlinkDir
+# DIR_GEMMA=/scratch/mstein3/eQTL_Hutterites/Female_Resp/GemmaDir
+#
+#
+
+
+
+
+# CHR_COUNTS="Chr${FILE}_MaleLPSGX_11518.txt"
+# CHR_PLINK="Male_QCGeno_chr${FILE}"
+# COUNTS=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/MaleSamp_GX/LPS_Male_Chr/$CHR_COUNTS
+# PCA=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/MaleSamp_GX/PCs/PC3_LPSGX_Male_11618.txt
+# DIR_PHENO=/group/nicolae-lab/users/mstein3/rna.seq.2017/eQTL_data/Male_LPS_output/GemmaDir_ML
+# DIR_PLINK=/group/nicolae-lab/users/mstein3/rna.seq.2017/eQTL_data/Male_LPS_output/PlinkDir_ML
+# DIR_GEMMA=/group/nicolae-lab/users/mstein3/rna.seq.2017/eQTL_data/Male_LPS_output/GemmaDir_ML
+#
+# CHR_COUNTS="Chr${FILE}_MaleRespGX_11518.txt"
+# CHR_PLINK="Male_QCGeno_chr${FILE}"
+# COUNTS=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/MaleSamp_GX/Resp_Male_Chr/$CHR_COUNTS
+# PCA=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/MaleSamp_GX/PCs/PC3_RespGX_Male_11618.txt
+# PREFIX_PLINK=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/MaleSamp_Genos/Male_Genos_Chr/$CHR_PLINK
+# DIR_PHENO=/group/nicolae-lab/users/mstein3/rna.seq.2017/eQTL_data/Male_Resp_output/GemmaDir_MR
+# DIR_PLINK=/group/nicolae-lab/users/mstein3/rna.seq.2017/eQTL_data/Male_Resp_output/PlinkDir_MR
+# DIR_GEMMA=/group/nicolae-lab/users/mstein3/rna.seq.2017/eQTL_data/Male_Resp_output/GemmaDir_MR
+#
+# CHR_COUNTS="Chr${FILE}_FemaleNullGX_11518.txt"
+# COUNTS=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/FemaleSamp_GX/Null_Female_Chr/$CHR_COUNTS
+# PCA=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/FemaleSamp_GX/PCs/PC3_NullGX_Female_11618.txt
+# DIR_PHENO=/group/nicolae-lab/users/mstein3/rna.seq.2017/eQTL_data/Female_Null_output/GemmaDir_FN
+# DIR_PLINK=/group/nicolae-lab/users/mstein3/rna.seq.2017/eQTL_data/Female_Null_output/PlinkDir_FN
+# DIR_GEMMA=/group/nicolae-lab/users/mstein3/rna.seq.2017/eQTL_data/Female_Null_output/GemmaDir_FN
+#
+# CHR_COUNTS="Chr${FILE}_FemaleLPSGX_11518.txt"
+# COUNTS=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/FemaleSamp_GX/LPS_Female_Chr/$CHR_COUNTS
+# PCA=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/FemaleSamp_GX/PCs/PC3_LPSGX_Female_11618.txt
+# DIR_PHENO=/group/nicolae-lab/users/mstein3/rna.seq.2017/eQTL_data/Female_LPS_output/GemmaDir_FL
+# DIR_PLINK=/group/nicolae-lab/users/mstein3/rna.seq.2017/eQTL_data/Female_LPS_output/PlinkDir_FL
+# DIR_GEMMA=/group/nicolae-lab/users/mstein3/rna.seq.2017/eQTL_data/Female_LPS_output/GemmaDir_FL
+#
+# CHR_COUNTS="Chr${FILE}_FemaleRespGX_11518.txt"
+# CHR_PLINK="Female_QCGeno_chr${FILE}"
+# COUNTS=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/FemaleSamp_GX/Resp_Female_Chr/$CHR_COUNTS
+# PCA=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/FemaleSamp_GX/PCs/PC3_RespGX_Female_11618.txt
+# PREFIX_PLINK=/group/ober-resources/users/mstein3/rna.seq.2017/input_files_eQTL/FemaleSamp_Genos/Female_Genos_Chr/$CHR_PLINK
+# DIR_PHENO=/group/nicolae-lab/users/mstein3/rna.seq.2017/eQTL_data/Female_Resp_output/GemmaDir_FR
+# DIR_PLINK=/group/nicolae-lab/users/mstein3/rna.seq.2017/eQTL_data/Female_Resp_output/PlinkDir_FR
+# DIR_GEMMA=/group/nicolae-lab/users/mstein3/rna.seq.2017/eQTL_data/Female_Resp_output/GemmaDir_FR

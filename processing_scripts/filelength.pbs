@@ -1,0 +1,17 @@
+#PBS -S /bin/bash
+#PBS -N File_Length
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=8gb
+#PBS -l walltime=8:00:00
+#PBS -o filelength.out
+#PBS -e filelength.err
+
+# Count the lines in the unmapped fastq file. 
+
+
+for file in /group/ober-resources/users/mstein3/rna.seq.2017/symlinks_fastq/*
+do
+  echo "$file $(zcat $file | wc -l)"
+done
+
+# To get the number of unmapped reads, divide lines in file by 4 (each read = 4 lines).

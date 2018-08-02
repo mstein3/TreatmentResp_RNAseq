@@ -1,0 +1,18 @@
+
+
+------------ Job WrapUp ------------
+
+Job ID:            7485368.cri16sc001
+User ID:           mstein3
+Job Name:          GatherDEResults
+Queue Name:        mid
+Working Directory: /group/ober-resources/users/mstein3/rna.seq.2017/DE_gemma_scripts
+Resource List:     nodes=1:ppn=1,mem=16gb,walltime=02:00:00,neednodes=1:ppn=1
+Resources Used:    cput=00:01:56,vmem=158556kb,walltime=00:02:14,mem=41044kb,energy_used=0
+Exit Code:         0
+Mother Superior:   cri16cn213
+
+Execution Nodes: 
+cri16cn213
+
+

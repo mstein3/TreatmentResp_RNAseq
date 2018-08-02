@@ -1,0 +1,40 @@
+# ------------ qsub parameters -------------------------- #
+#PBS -S /bin/bash
+#PBS -N FindMissingGenes
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=8gb
+#PBS -l walltime=1:00:00
+#PBS -o FindMissingGenes.out
+#PBS -e FindMissingGenes.err
+
+# --------------- load modules --------------#
+module load gcc
+module load R
+
+
+# -------------- commands ----------------# 
+
+# Usage: Rscript Finding_missing_genes_eQTL.R <dir_gemma_covar> <dir_gene_output> <output_prefix>
+# or: 
+# Usage: Rscript Finding_missing_genes_topRes.R <dir_gemma_covar> <dir_gene_output> <output_prefix>
+
+DIR_GENE_OUTPUT=/group/ober-resources/users/mstein3/rna.seq.2017/summary_DE_results/MissingGeneLists
+
+# Treatment by sex interaction analysis -----------
+#GEMMA_DIR=/scratch/mstein3/DE_gemma_Hutterites/LPSNull_gxe_TreatSex/GemmaDir/TMMBatch_Int
+#OUTPUT_PREFIX=TreatSex_Int
+#Rscript /group/ober-resources/users/mstein3/rna.seq.2017/DE_gemma_scripts/Finding_missing_genes.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+
+
+
+
+# Treatment Main Effect ----------------------
+# GEMMA_DIR=/scratch/mstein3/DE_gemma_Hutterites/LPSNull_gxe_TreatSex/GemmaDir/Treat_Main
+# OUTPUT_PREFIX=TreatMainEffect
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/DE_gemma_scripts/Finding_missing_genes.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX
+
+
+# Treatment by Sex as  Main Effect ----------
+GEMMA_DIR=/scratch/mstein3/DE_gemma_Hutterites/TreatbySex_asPredictor/GemmaDir/TreatbySex_coded01
+OUTPUT_PREFIX=TreatbySexMainEffect
+Rscript /group/ober-resources/users/mstein3/rna.seq.2017/DE_gemma_scripts/Finding_missing_genes.R $GEMMA_DIR $DIR_GENE_OUTPUT $OUTPUT_PREFIX

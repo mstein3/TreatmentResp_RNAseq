@@ -1,0 +1,34 @@
+# ------------ qsub parameters -------------------------- #
+#PBS -S /bin/bash
+#PBS -N create_GeneSNPList
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=16gb
+#PBS -l walltime=8:00:00
+#PBS -o create_GeneSNPList.out
+#PBS -e create_GeneSNPList.err
+
+# --------------- load modules --------------#
+module load gcc
+module load R
+
+
+# -------------- commands ----------------# 
+
+## Purpose:  Gathering all gene-snp pairs tested for each gene from the GEMMA output. Then, put all of those files together into a single file. 
+# Usage: Rscript Create_AllGeneSNP_list.R <dir_gemma_covar> <dir_gemma> <collected_output_name>
+
+
+## Batch-corrected, TMM normalized data: 
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Create_AllGeneSNP_list.R /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/TMMbatch /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir MN_TMMBatch_GeneSNPList
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Create_AllGeneSNP_list.R /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/TMMbatch /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir FN_TMMBatch_GeneSNPList
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Create_AllGeneSNP_list.R /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/TMMbatch /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir ML_TMMBatch_GeneSNPList
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Create_AllGeneSNP_list.R /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/TMMbatch /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir FL_TMMBatch_GeneSNPList
+
+
+## Purpose: Create a final list of gene SNP pairs to input into mash. 
+# Pull out 1 out of every 50 SNPs from all GeneSNP pairs, 
+# Add in the gene SNP pairs with the highest Z scores that will be used as input in the mash 1by1 analysis. 
+# Remove any duplicates. 
+# Usage: Rscript CreateSmallerGeneSNPList.R
+
+Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/CreateSmallerGeneSNPList.R

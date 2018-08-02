@@ -1,0 +1,49 @@
+
+# ------------ qsub parameters -------------------------- #
+#PBS -S /bin/bash
+#PBS -N gemmaBB_DE_LPSNull
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=32gb
+#PBS -l walltime=12:00:00
+#PBS -o gemmaBB_DE_LPSNull.out
+#PBS -e gemmaBB_DE_LPSNull.err
+
+# --------------- load modules --------------#
+module load gcc
+module load gemma 
+module load R
+module load plink
+
+# -------------- array info ----------------# 
+INPUT_FILE=$FILE
+
+# Submit Rscript for each 
+
+while read LINE; 
+do
+    echo "$LINE"
+	COUNTS=/group/ober-resources/users/mstein3/rna.seq.2017/DE_gemma_InputFiles/NullLPS_GX_BatchCorr_BIMBAMPhenoFile_71218.txt
+	COVAR=/group/ober-resources/users/mstein3/rna.seq.2017/DE_gemma_InputFiles/LPSNull_Covar_Age.csv
+	RELAT=/group/ober-resources/users/mstein3/rna.seq.2017/DE_gemma_InputFiles/NbyN_LPSNull_Kinship_224.txt
+	GENO_FILE=/group/ober-resources/users/mstein3/rna.seq.2017/DE_gemma_InputFiles/Treatment_BIMBAMGenoFile_71218.csv
+	GXE=/group/ober-resources/users/mstein3/rna.seq.2017/DE_gemma_InputFiles/LPSNull_SexColumn_gxe.csv
+	DIR_PHENO=/scratch/mstein3/DE_gemma_Hutterites/LPSNull_gxe_TreatSex/PhenoDir
+	DIR_GEMMA=/scratch/mstein3/DE_gemma_Hutterites/LPSNull_gxe_TreatSex/GemmaDir
+	
+	echo "Rscript /group/ober-resources/users/mstein3/rna.seq.2017/DE_gemma_scripts/Gemma_bimbam_DE.R  $COUNTS $COVAR $RELAT $GENO_FILE $GXE $LINE $DIR_PHENO $DIR_GEMMA"
+	
+	# Usage: Gemma_bimbam_DE.R <counts> <covar_file> <relat> <geno_file> <gxe_file> <gene_name> <dir_pheno> <dir_gemma> 
+	
+	Rscript /group/ober-resources/users/mstein3/rna.seq.2017/DE_gemma_scripts/Gemma_bimbam_DE.R  $COUNTS $COVAR $RELAT $GENO_FILE $GXE $LINE $DIR_PHENO $DIR_GEMMA
+done < $INPUT_FILE
+
+
+
+# What the arguments mean: 
+# COUNTS: quantile normalized, log 2 CPM gene counts. "-p"
+# COVAR: covariate file, first column all 1's to serve as intercept. "-c"
+# RELAT: Relatedness matrix. "-k"
+# GENO_FILE: for rs1801274 analysis, mean genotype file in bimbam format. "-g"
+# GXE: Column to specify environmental variable to compute gxe calculation, using "-gxe"
+# DIR_PHENO: Top-level directory to save phenotype file for each gene.
+# DIR_GEMMA: Top-level directory to store GEMMA results for each gene.

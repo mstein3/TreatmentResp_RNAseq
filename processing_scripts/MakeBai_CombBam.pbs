@@ -1,0 +1,28 @@
+#PBS -S /bin/bash
+#PBS -N MakeBai_CombBam
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=8gb
+#PBS -l walltime=2:00:00
+#PBS -o MakeBai_CombBam.out
+#PBS -e MakeBai_CombBam.err
+
+
+module load gcc/6.2.0
+module load samtools
+
+INPUT_DIR=/group/nicolae-lab/users/mstein3/rna.seq.2017/STARhg19_CombinedBAM
+SORTED_DIR=/group/nicolae-lab/users/mstein3/rna.seq.2017/STARhg19_CombSortedBam
+SORTED_PREFIX="$(basename $ONE)_sorted.bam"
+#SORTED_PREFIX_BAM="$(basename $ONE)_sorted.bam"
+BAI_NAME="$(basename $ONE)_sorted.bai"
+
+
+# Sort .bam files
+samtools sort $INPUT_DIR/$ONE -o $SORTED_DIR/$SORTED_PREFIX
+
+# Index .bam files: 
+samtools index -b $SORTED_DIR/$SORTED_PREFIX 
+
+
+
+

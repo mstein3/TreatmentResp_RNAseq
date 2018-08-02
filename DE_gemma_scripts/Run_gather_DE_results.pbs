@@ -1,0 +1,27 @@
+# ------------ qsub parameters -------------------------- #
+#PBS -S /bin/bash
+#PBS -N GatherDEResults
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=16gb
+#PBS -l walltime=2:00:00
+#PBS -o GatherDEResults.out
+#PBS -e GatherDEResults.err
+
+# --------------- load modules --------------#
+module load gcc
+module load R
+
+
+# -------------- commands ----------------# 
+
+## Purpose: Pull results line for each gene, combine into a single file with all genes:
+# Usage: Gather_DE_results.R <dir_gemma_subdir> <dir_gemma> <analysis name>
+
+# Treatment by sex interaction: 
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/DE_gemma_scripts/Gather_DE_results.R /scratch/mstein3/DE_gemma_Hutterites/LPSNull_gxe_TreatSex/GemmaDir/TMMBatch_Int /scratch/mstein3/DE_gemma_Hutterites/LPSNull_gxe_TreatSex/GemmaDir TreatSexInt
+
+# Treatment main effect: 
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/DE_gemma_scripts/Gather_DE_results.R /scratch/mstein3/DE_gemma_Hutterites/LPSNull_gxe_TreatSex/GemmaDir/Treat_Main /scratch/mstein3/DE_gemma_Hutterites/LPSNull_gxe_TreatSex/GemmaDir TreatMainEffect
+
+# Treatment by sex interaction as the main effect: 
+Rscript /group/ober-resources/users/mstein3/rna.seq.2017/DE_gemma_scripts/Gather_DE_results.R /scratch/mstein3/DE_gemma_Hutterites/TreatbySex_asPredictor/GemmaDir/TreatbySex_coded01 /scratch/mstein3/DE_gemma_Hutterites/TreatbySex_asPredictor/GemmaDir TreatbySexMainEffect

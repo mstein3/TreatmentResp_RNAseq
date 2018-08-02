@@ -1,0 +1,25 @@
+#PBS -S /bin/bash
+#PBS -N run_index_genome_star
+#PBS -l nodes=1:ppn=8
+#PBS -l mem=64gb
+#PBS -l walltime=48:00:00
+#PBS -o run_index_genome_star19.out
+#PBS -e run_index_genome_star19.err
+
+# Run script as is- no .sh script needed to submit. 
+
+# Load modules
+module load gcc/6.2.0
+module load STAR/2.5.2b
+
+# Set file and directory locations
+OUTPUT_DIR=/scratch/mstein3/rnaseq_processing2017/Index_Genome_STAR
+FASTA_FILES=/scratch/mstein3/rnaseq_processing2017/Genome_downloads/hg19/GRCh37.p13.genome.fa 
+GTF_FILES=/scratch/mstein3/rnaseq_processing2017/Genome_downloads/hg19/gencode.v19.annotation.gtf
+
+
+# Index genome.
+STAR --runThreadN 8 --runMode genomeGenerate --genomeDir $OUTPUT_DIR --genomeFastaFiles $FASTA_FILES --sjdbGTFfile $GTF_FILES --sjdbOverhang 100
+
+
+

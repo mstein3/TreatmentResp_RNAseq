@@ -1,0 +1,100 @@
+# ------------ qsub parameters -------------------------- #
+#PBS -S /bin/bash
+#PBS -N run_assemble_max_val
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=16gb
+#PBS -l walltime=8:00:00
+#PBS -o run_assemble_max_val.out
+#PBS -e run_assemble_max_val.err
+
+# --------------- load modules --------------#
+module load gcc
+module load R
+
+
+# -------------- commands ----------------# 
+
+## Purpose: Calculate the Z score within each gene gemma result. Pull the line with the largest absolute zscore, and combine into one file: 
+# Usage: parse_gemma_topZscore.R <dir_gemma_covar> <dir_gemma> <analysis method>
+
+## Batch-corrected, TMM normalized data: 
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_topZscore.R /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/TMMbatch /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir MN_TMMBatch
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_topZscore.R /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/TMMbatch /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir FN_TMMBatch
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_topZscore.R /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/TMMbatch /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir ML_TMMBatch
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_topZscore.R /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/TMMbatch /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir FL_TMMBatch
+
+
+## Purpose: Gather together the topRes files. These are the gemma results from the specific gene-snp pair that had the highest z score across datasets. 
+# Usage:  Assemble_MaxResults.R <dir_gemma> <dir_gemma_covar> <analysis_name>
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_MaxResults.R /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/TMMbatch MN_TMMBatch
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_MaxResults.R /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/TMMbatch FN_TMMBatch
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_MaxResults.R /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/TMMbatch ML_TMMBatch
+ Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_MaxResults.R /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/TMMbatch FL_TMMBatch
+
+
+
+
+
+## Purpose: Pull top Beta values for each gene, combine into a top-beta-method file with all genes:
+# Usage: parse_gemma_betas.R <dir_gemma_covar> <dir_gemma> <analysis method>
+
+# Uncorrected data: 
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_betas.R /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/covar1 /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir uncorr
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_betas.R /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/covar1 /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir uncorr
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_betas.R /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/covar1 /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir uncorr
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_betas.R /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/covar1 /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir uncorr
+
+# Batch-corrected data: 
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_betas.R /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/batch_covar1 /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir batch
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_betas.R /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/batch_covar1 /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir batch
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_betas.R /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/batch_covar1 /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir batch
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_betas.R /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/batch_covar1 /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir batch
+
+# SV-corrected data: 
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_betas.R /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/sv_covar1 /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir sv
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_betas.R /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/sv_covar1 /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir sv
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_betas.R /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/sv_covar1 /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir sv
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_betas.R /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/sv_covar1 /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir sv
+
+
+## Purpose: Pull top P-values: 
+# Usage: Rscript parse_gemma_results.R <dir_gemma_covar> <dir_gemma> <f_top>
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_results.R /scratch/mstein3/eQTL_Hutterites/All_Null/GemmaDir/covar2 /scratch/mstein3/eQTL_Hutterites/All_Null/GemmaDir/top-covar-2.txt
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_results.R /scratch/mstein3/eQTL_Hutterites/All_LPS/GemmaDir/covar2 /scratch/mstein3/eQTL_Hutterites/All_LPS/GemmaDir/top-covar-2.txt
+
+# Uncorrected data:
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_results.R /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/covar1 /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir MN_uncorr
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_results.R /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/covar1 /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir FN_uncorr
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_results.R /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/covar1 /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir ML_uncorr
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_results.R /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/covar1 /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir FL_uncorr
+
+# Batch-corrected data: 
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_results.R /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/batch_covar1 /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir MN_batch
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_results.R /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/batch_covar1 /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir FN_batch
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_results.R /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/batch_covar1 /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir ML_batch
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_results.R /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/batch_covar1 /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir FL_batch
+
+# SV-corrected data: 
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_results.R /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/sv_covar1 /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir MN_sv
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_results.R /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/sv_covar1 /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir FN_sv
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_results.R /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/sv_covar1 /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir ML_sv
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/parse_gemma_results.R /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/sv_covar1 /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir FL_sv
+
+
+## Purpose: Put together the topResults.txt files into one file. The topResults.txt files were generated by finding the top SNP for each gene (by most significant P-value)
+## To build the data sets required for the mash 1by1 calculation 
+# Usage: Rscript Assemble_MaxResults.R <dir_gemma> <dir_gemma_covar>
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_MaxResults.R /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/covar1 ML_uncorr
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_MaxResults.R /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/covar1 MN_uncorr
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_MaxResults.R /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/covar1 FN_uncorr
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_MaxResults.R /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/covar1 FL_uncorr
+
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_MaxResults.R /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/batch_covar1 ML_batch
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_MaxResults.R /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/batch_covar1 MN_batch
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_MaxResults.R /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/batch_covar1 FN_batch
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_MaxResults.R /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/batch_covar1 FL_batch
+
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_MaxResults.R /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir /scratch/mstein3/eQTL_Hutterites/Male_LPS/GemmaDir/sv_covar1 ML_sv
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_MaxResults.R /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir /scratch/mstein3/eQTL_Hutterites/Male_Null/GemmaDir/sv_covar1 MN_sv
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_MaxResults.R /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir /scratch/mstein3/eQTL_Hutterites/Female_Null/GemmaDir/sv_covar1 FN_sv
+# Rscript /group/ober-resources/users/mstein3/rna.seq.2017/eQTL_scripts/Assemble_MaxResults.R /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir /scratch/mstein3/eQTL_Hutterites/Female_LPS/GemmaDir/sv_covar1 FL_sv
