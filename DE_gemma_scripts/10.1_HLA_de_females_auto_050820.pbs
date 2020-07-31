@@ -1,0 +1,82 @@
+#!/bin/bash
+###############################
+# Resource Manager Directives #
+###############################
+#PBS -N 10.1_HLA_de_females_auto_050820
+#PBS -S /bin/bash
+#PBS -l walltime=15:00:00
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=7gb
+#PBS -o 10.1_HLA_de_females_auto_050820.log
+#PBS -e 10.1_HLA_de_females_auto_050820.err
+#PBS -M mconery@uchicago.edu
+#################
+# Job Execution #
+#################
+
+export TMPDIR=$WORKDIR
+cd $PBS_O_WORKDIR
+export TEMP=$WORKDIR
+
+module load gcc/6.2.0
+module load gemma/0.97
+module load plink/1.90
+module load python/3.6.0
+module load R/3.6.1
+
+#Set working directory
+expr_dir=/scratch/mconery/sex-specific/expression_data
+covar_dir=/scratch/mconery/sex-specific/processed_data
+grm_dir=/scratch/mconery/sex-specific/GRMs
+filter_dir=/scratch/mconery/sex-specific/filters
+out_dir=/scratch/mconery/sex-specific/de_analysis
+
+#Run expression file making script
+#Two pbs scripts will have this command, but we'll only run once because the rest are unnecessary
+Rscript HLA_make_expression_files.R
+
+#Set gender and gene_list for this script
+gender=females
+gene_list=$filter_dir/HLA_auto_genes_DE.tsv
+
+#Run script for both grm types
+#Only need to do for X-linked genes (The autosomal script will not have this loop)
+for type in auto; do
+
+	#Call ped_prep script (Will not need to do this again in autosomal script)
+	python ped_prep_DE.py $covar_dir/$gender.Pheno.Rready.nullLPS.7M.031520.txt $filter_dir/HLA.$gender.$type.iids.txt $covar_dir/HLA.Hutterite.$gender.rigged.$type.ped $covar_dir/HLA.Hutterite.$gender.rigged.$type.map
+	#Recode ped and map file to bed/bim/fam format
+	plink --file $covar_dir/HLA.Hutterite.$gender.rigged.$type --make-bed --out $covar_dir/HLA.Hutterite.$gender.rigged.$type
+
+	#Loop through all gene files
+	cat $gene_list | while read gene; do 
+
+		#list file path for gene expression data (Commmented out for a rerun)
+		pheno_file=$expr_dir/HLA.$gender.$gene.$type.txt  
+		
+
+		#Copy over bed and bim files (Commmented out for a rerun)
+		cp $covar_dir/HLA.Hutterite.$gender.rigged.$type.bed $expr_dir/gemma_files/HLA.$gender.$gene.$type.bed
+		cp $covar_dir/HLA.Hutterite.$gender.rigged.$type.bim $expr_dir/gemma_files/HLA.$gender.$gene.$type.bim
+
+
+		#call function that combines expr info into fam file for auto analysis (Commmented out for a rerun)
+		python fam_prep.py $pheno_file $covar_dir/HLA.Hutterite.$gender.rigged.$type.fam $expr_dir/gemma_files/HLA.$gender.$gene.$type.fam
+		
+
+		#run differential expression analysis in Gemma
+        	gemma	-bfile $expr_dir/gemma_files/HLA.$gender.$gene.$type \
+                	-k $grm_dir/HLA.$gender.$type.new.gemma.grm \
+			-km 2 \
+			-lmm 4 \
+			-o $gender.$gene.$type.gemma
+
+	        sleep 1
+
+
+	done
+
+	Move files to de_analysis folder
+	mv /scratch/mconery/sex-specific/scripts/output/$gender.*.assoc.txt /scratch/mconery/sex-specific/de_analysis
+
+done

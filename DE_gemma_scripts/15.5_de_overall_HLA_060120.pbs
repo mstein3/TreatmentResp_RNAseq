@@ -1,0 +1,113 @@
+#!/bin/bash
+
+###############################
+
+# Resource Manager Directives #
+
+###############################
+
+#PBS -N 15.5_de_overall_HLA_060120
+
+#PBS -S /bin/bash
+#PBS -l walltime=10:00:00
+
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=7gb
+
+#PBS -o 15.5_de_overall_HLA_060120.log
+
+#PBS -e 15.5_de_overall_HLA_060120.err
+
+#PBS -M mconery@uchicago.edu
+
+#################
+
+# Job Execution #
+
+#################
+
+
+export TMPDIR=$WORKDIR
+cd $PBS_O_WORKDIR
+export TEMP=$WORKDIR
+
+module load gcc/6.2.0
+module load plink/1.90
+module load python/3.6.0
+module load R/3.6.1
+module load gemma/0.97
+
+
+#First Chunk converts pgen to bed files without removing dup ids
+
+#Define variable names
+inp_dir=/scratch/mconery/sex-specific/raw_data
+filter_dir=/scratch/mconery/sex-specific/filters
+grm_dir=/scratch/mconery/sex-specific/GRMs
+out_dir=/scratch/mconery/sex-specific/qual_controlled
+process_dir=/scratch/mconery/sex-specific/processed_data
+expr_dir=/scratch/mconery/sex-specific/expression_data
+
+#Run GRM making scripts (Commmented out for a rerun)
+#Rscript prep_grms_gemma_overall_HLA.R
+
+#Run expression file making script (LEAVING ON BECAUSE THIS STEP BROKE THE LAST TIME!)
+Rscript make_expression_files_overall_HLA.R
+
+#Call ped_prep script (Will not need to do this again in autosomal script) (Commenting out for rerun)
+#python ped_prep_overall.py $process_dir/females.Pheno.Rready.nullLPS.7M.031520.txt $process_dir/males.Pheno.Rready.nullLPS.7M.031520.txt $filter_dir/HLA.overall.iids.txt $process_dir/HLA.overall.rigged.ped $process_dir/HLA.overall.rigged.map
+#Recode ped and map file to bed/bim/fam format (Commenting out for rerun)
+#plink --file $process_dir/HLA.overall.rigged --make-bed --out $process_dir/HLA.overall.rigged
+
+#Set gene_list for this script
+gene_list=$filter_dir/HLA_auto_genes_DE.tsv
+
+#Loop through all gene files
+cat $gene_list | while read gene; do 
+
+	#list file path for gene expression data (Commmented out for a rerun)
+	#pheno_file=$expr_dir/overall.$gene.txt  
+		
+
+	#Copy over bed and bim files (Commmented out for a rerun)
+	#cp $process_dir/HLA.overall.rigged.bed $expr_dir/gemma_files/overall.$gene.bed
+	#cp $process_dir/HLA.overall.rigged.bim $expr_dir/gemma_files/overall.$gene.bim
+
+
+	#call function that combines expr info into fam file for auto analysis (Commmented out for a rerun)
+	#python fam_prep.py $pheno_file $process_dir/HLA.overall.rigged.fam $expr_dir/gemma_files/overall.$gene.fam
+		
+
+	#run differential expression analysis in Gemma (COMMENTED OUT SINCE THIS ANALYSIS RAN CORRECTLY)
+       	#gemma	-bfile $expr_dir/gemma_files/overall.$gene \
+        #       	-k $grm_dir/HLA.overall.gemma.grm \
+	#	-km 2 \
+	#	-lmm 4 \
+	#	-o overall.$gene.gemma
+
+        #sleep 1
+
+	#run sex-by-treatment analysis in gemma (THIS PART NEEDS TO RERUN)
+	gemma	-bfile $expr_dir/gemma_files/overall.$gene \
+               	-k $grm_dir/HLA.overall.gemma.grm \
+		-km 2 \
+		-gxe $process_dir/HLA.overall.sex.info.txt \
+		-lmm 3 \
+		-o sbt.$gene.gemma
+
+
+done
+
+Move files to de_analysis folder
+#cp /scratch/mconery/sex-specific/scripts/output/overall.*.assoc.txt /scratch/mconery/sex-specific/overall_analysis
+cp /scratch/mconery/sex-specific/scripts/output/sbt.*.assoc.txt /scratch/mconery/sex-specific/sex_by_treatment_analysis
+#Remove junk
+#rm /scratch/mconery/sex-specific/scripts/output/overall.*.assoc.txt
+rm /scratch/mconery/sex-specific/scripts/output/sbt.*.assoc.txt
+
+#Call joining files
+#python join_overall_files.py /scratch/mconery/sex-specific/overall_analysis
+python join_sbt_files.py /scratch/mconery/sex-specific/sex_by_treatment_analysis
+
+
+

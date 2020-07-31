@@ -1,0 +1,81 @@
+#!/bin/bash
+###############################
+# Resource Manager Directives #
+###############################
+#PBS -N 2.2_de_males_X_031620
+#PBS -S /bin/bash
+#PBS -l walltime=15:00:00
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=7gb
+#PBS -o 2.2_de_males_X_031620.log
+#PBS -e 2.2_de_males_X_031620.err
+#PBS -M mconery@uchicago.edu
+#################
+# Job Execution #
+#################
+
+export TMPDIR=$WORKDIR
+cd $PBS_O_WORKDIR
+export TEMP=$WORKDIR
+
+module load gcc/6.2.0
+module load gemma/0.97
+module load plink/1.90
+module load python/3.6.0
+module load R/3.6.1
+
+#Set working directory
+expr_dir=/scratch/mconery/sex-specific/expression_data
+covar_dir=/scratch/mconery/sex-specific/processed_data
+grm_dir=/scratch/mconery/sex-specific/GRMs
+filter_dir=/scratch/mconery/sex-specific/filters
+out_dir=/scratch/mconery/sex-specific/de_analysis
+
+#Run expression file making script
+#Four pbs scripts will have this command, but we'll only run once because the rest are unnecessary
+#Rscript make_expression_files.R
+
+#Set gender for this script
+gender=males
+
+#Run script for both grm types
+#Only need to do for X-linked genes (The autosomal script will not have this loop)
+for type in X auto; do
+
+	#Call ped_prep script (Will not need to do this again in autosomal script)
+	python ped_prep_DE.py $covar_dir/$gender.Pheno.Rready.nullLPS.7M.031520.txt $filter_dir/$gender.$type.iids.txt $covar_dir/Hutterite.$gender.rigged.$type.ped $covar_dir/Hutterite.$gender.rigged.$type.map
+	#Recode ped and map file to bed/bim/fam format
+	plink --file $covar_dir/Hutterite.$gender.rigged.$type --make-bed --out $covar_dir/Hutterite.$gender.rigged.$type
+
+	#Loop through all gene files
+	for gene in ARSD PRKX RP11-706O15.1 HDHD1 STS PNPLA4 KAL1 TBL1X WWC3 CLCN4 HCCS ARHGAP6 MSL3 PRPS2 TLR7 TLR8 TMSB4X TCEANC RAB9A TRAPPC2 OFD1 GPM6B GEMIN8 FANCB MOSPD2 PIGA PIR BMX CA5B ZRSR2 AP1S2 CTPS2 SYAP1 TXLNG RBBP7 REPS2 NHS SCML1 RAI2 SCML2 CDKL5 PHKA2 PDHA1 SH3KBP1 CXorf23 MAP7D2 EIF1AX RPS6KA3 CNKSR2 KLHL34 MBTPS2 SMS PHEX PRDX4 ACOT9 SAT1 APOO KLHL15 EIF2S3 ZFX PDK3 POLA1 CXorf21 GK TAB3 DMD CYBB DYNLT3 RPGR MID1IP1 BCOR ATP6AP2 CXorf38 MED14 USP9X DDX3X CASK GPR34 GPR82 MAOA NDP EFHC2 FUNDC1 KDM6A KRBOX4 ZNF674 CHST7 SLC9A7 RP2 NDUFB11 RBM10 UBA1 CDK16 USP11 ZNF41 CXorf24 ARAF SYN1 TIMP1 CFP ELK1 UXT SLC38A5 FTSJ1 PORCN EBP TBC1D25 RBM3 WDR13 WAS SUV39H1 GATA1 HDAC6 TIMM17B PQBP1 SLC35A2 PIM2 OTUD5 GRIPAP1 TFE3 CCDC120 PRAF2 WDR45 GPKOW PLP2 PRICKLE3 CCDC22 FOXP3 PPP1R3F CLCN5 MAGED1 TSPYL2 KDM5C IQSEC2 SMC1A HSD17B10 HUWE1 PHF8 TSR2 FGD1 GNL3L MAGED2 TRO APEX2 ALAS2 FAM104B MAGEH1 USP51 RRAGB KLF8 UBQLN2 SPIN3 SPIN2B FAAH2 ZXDB ZXDA ARHGEF9 AMER1 MTMR8 ZC4H2 ZC3H12B LAS1L MSN VSIG4 OPHN1 YIPF6 STARD8 EFNB1 PJA1 EDA IGBP1 PDZD11 KIF4A DLG3 SLC7A3 SNX12 FOXO4 CXorf65 IL2RG MED12 NLGN3 ZMYM3 NONO ITGB1BP2 TAF1 OGT ACRC CXCR3 NHSL2 RGAG4 PIN4 ERCC6L RPS4X HDAC8 PHKA1 NAP1L2 CHIC1 SLC16A2 RLIM KIAA2022 ABCB7 UPRT PBDC1 ATRX MAGT1 COX7B ATP7A PGK1 TAF9B CYSLTR1 P2RY10 GPR174 ITM2A BRWD3 HMGN5 SH3BGRL HDX APOOL SATL1 ZNF711 CHM KLHL4 NAP1L3 DIAPH2 TSPAN6 CSTF2 XKRX TRMT2B CENPI BTK GLA ARMCX6 ARMCX3 ARMCX2 ZMAT1 ARMCX5 GPRASP1 GPRASP2 BHLHB9 BEX1 BEX4 TCEAL8 BEX2 WBP5 NGFRAP1 TCEAL4 TCEAL3 TCEAL1 MORF4L2 RAB9B FAM199X CXorf57 TBC1D8B MORC4 RBM41 FRMPD3 PRPS1 TSC22D3 MID2 VSIG1 PSMD10 ATG4A NXT2 KCNE1L ACSL4 TMEM164 AMMECR1 PAK3 ALG13 AMOT KLHL13 WDR44 DOCK11 IL13RA1 LONRF3 PGRMC1 SLC25A43 SLC25A5 CXorf56 UBE2A NKRF SEPT6 SOWAHD RPL39 UPF3B RNF113A NDUFA1 NKAP TMEM255A LAMP2 CUL4B MCTS1 C1GALT1C1 THOC2 XIAP STAG2 SH2D1A TENM1 SMARCA1 OCRL APLN XPNPEP2 SASH3 ZDHHC9 UTP14A BCORL1 ELF4 AIFM1 RAB33A ZNF280C SLC25A14 RBMX2 ENOX2 MST4 FRMD7 RAP2C MBNL3 GPC4 GPC3 PHF6 HPRT1 FAM122B FAM122C MOSPD1 FAM127C FAM127A FAM127B ZNF75D DDX26B MMGT1 SLC9A6 FHL1 MAP7D3 HTATSF1 CD40LG ARHGEF6 RBMX FGF13 MCF2 ATP11C FMR1 IDS CXorf40A TMEM185A CXorf40B MTM1 MTMR1 CD99L2 HMGB3 VMA21 CETN2 NSDHL ZNF185 FAM58A SLC6A8 BCAP31 ABCD1 IDH3G SSR4 PDZD4 L1CAM ARHGAP4 NAA10 RENBP HCFC1 IRAK1 MECP2 TKTL1 FLNA EMD RPL10 DNASE1L1 TAZ ATP6AP1 GDI1 FAM50A PLXNA3 LAGE3 UBL4A SLC10A3 FAM3A G6PD IKBKG GAB3 DKC1 MPP1 F8 FUNDC2 BRCC3 VBP1 RAB39B CLIC2 TMLHE; do 
+
+		#list file path for gene expression data (Commmented out for a rerun)
+		pheno_file=$expr_dir/$gender.$gene.$type.txt  
+		
+
+		#Copy over bed and bim files (Commmented out for a rerun)
+		cp $covar_dir/Hutterite.$gender.rigged.$type.bed $expr_dir/gemma_files/$gender.$gene.$type.bed
+		cp $covar_dir/Hutterite.$gender.rigged.$type.bim $expr_dir/gemma_files/$gender.$gene.$type.bim
+
+
+		#call function that combines expr info into fam file for X (1st) and auto (2nd) analyses (Commmented out for a rerun)
+		python fam_prep.py $pheno_file $covar_dir/Hutterite.$gender.rigged.$type.fam $expr_dir/gemma_files/$gender.$gene.$type.fam
+		
+
+		#run differential expression analysis in Gemma
+        	gemma	-bfile $expr_dir/gemma_files/$gender.$gene.$type \
+                	-k $grm_dir/$gender.$type.new.gemma.grm \
+			-km 2 \
+			-lmm 4 \
+			-o $gender.$gene.$type.gemma
+
+	        sleep 1
+
+
+	done
+
+	Move files to de_analysis_newgrm folder
+	mv /scratch/mconery/sex-specific/scripts/output/$gender.*.assoc.txt /scratch/mconery/sex-specific/de_analysis
+
+done

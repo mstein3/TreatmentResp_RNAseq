@@ -1,0 +1,40 @@
+#!/bin/bash
+###############################
+# Resource Manager Directives #
+###############################
+#PBS -N 5_join_de_files_031920
+#PBS -S /bin/bash
+#PBS -l walltime=15:00:00
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=7gb
+#PBS -o 5_join_de_files_031920.log
+#PBS -e 5_join_de_files_031920.err
+#PBS -M mconery@uchicago.edu
+#################
+# Job Execution #
+#################
+
+export TMPDIR=$WORKDIR
+cd $PBS_O_WORKDIR
+export TEMP=$WORKDIR
+
+module load gcc/6.2.0
+module load gemma/0.97
+module load plink/1.90
+module load python/3.6.0
+module load R/3.6.1
+
+#Set working directory
+inp_dir=/scratch/mconery/sex-specific/de_analysis
+
+#Run script for both genders
+for gender in males females; do
+
+	#Loop through both GRM types (X-linked genes were run with both GRMs but autosomal genes were run only with auto GRM)
+	for GRM in X auto; do 
+		
+		#Call python script to merge files
+		python join_de_files.py $inp_dir $gender $GRM
+		
+	done
+done
