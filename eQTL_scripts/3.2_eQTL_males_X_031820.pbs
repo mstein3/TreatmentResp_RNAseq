@@ -1,0 +1,95 @@
+#!/bin/bash
+###############################
+# Resource Manager Directives #
+###############################
+#PBS -N 3.2_eQTL_males_X_031820
+#PBS -S /bin/bash
+#PBS -l walltime=200:00:00
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=7gb
+#PBS -o 3.2_eQTL_males_X_031820.log
+#PBS -e 3.2_eQTL_males_X_031820.err
+#PBS -M mconery@uchicago.edu
+#################
+# Job Execution #
+#################
+
+export TMPDIR=$WORKDIR
+cd $PBS_O_WORKDIR
+export TEMP=$WORKDIR
+
+module load gcc/6.2.0
+module load gemma/0.97
+module load plink/1.90
+module load python/3.6.0
+module load R/3.6.1
+
+#Set working directory
+filter_dir=/scratch/mconery/sex-specific/filters
+expr_dir=/scratch/mconery/sex-specific/expression_data
+covar_dir=/scratch/mconery/sex-specific/processed_data
+grm_dir=/scratch/mconery/sex-specific/GRMs
+out_dir=/scratch/mconery/sex-specific/eQTL_analysis
+
+#Run GRM making scripts (Need to run if this is the first run of the script)
+#Rscript prep_grms_gemma_eQTL.R
+
+#Reload R module for next script which needs biomaRt package (Need to run if this is the first run of this script)
+#module load R/3.5.0
+#Run script that gets gene positions and writes names of genes with known locs to file (Need to run if this is the first run of this script)
+#Rscript get_gene_positions.R
+
+#List needed variables
+gender=males
+gene_list=$filter_dir/x_genes_eQTL.tsv
+
+
+#Loop through all gene files
+cat $gene_list | while read gene; do 		
+
+	#make snv list for the gene (using auto map file as it shouldn't matter just to get the locations)
+	python make_snv_list.py $gene $gender $filter_dir/gene_locs.tsv $covar_dir/Hutterite.$gender.process.auto.map $filter_dir/gene_lists/
+	
+	for type in X auto; do
+
+		#list raw expression file paths 
+		pheno_file_no_treatment=$expr_dir/$gender.$gene.$type.no.treatment.txt 
+		pheno_file_treatment=$expr_dir/$gender.$gene.$type.treatment.txt 
+	
+		#filter plink file  (combo of treatment and grm_type)
+		plink --bfile $covar_dir/Hutterite.$gender.process.$type --extract $filter_dir/gene_lists/$gene.$gender.snvs.txt --maf 0.05 --keep $filter_dir/$gender.$type.no.treatment.iids.txt --make-bed --out $covar_dir/$gender.gene.plink/$gene.$gender.no.treatment.$type
+		plink --bfile $covar_dir/Hutterite.$gender.process.$type --extract $filter_dir/gene_lists/$gene.$gender.snvs.txt --maf 0.05 --keep $filter_dir/$gender.$type.treatment.iids.txt --make-bed --out $covar_dir/$gender.gene.plink/$gene.$gender.treatment.$type
+		
+		#Copy over remaining bed files 
+		#no_treatment
+		cp $covar_dir/$gender.gene.plink/$gene.$gender.no.treatment.$type.bed $expr_dir/gemma_files/$gender.$gene.gemma.$type.no.treatment.bed
+		cp $covar_dir/$gender.gene.plink/$gene.$gender.no.treatment.$type.bim $expr_dir/gemma_files/$gender.$gene.gemma.$type.no.treatment.bim
+		#treatment
+		cp $covar_dir/$gender.gene.plink/$gene.$gender.treatment.$type.bed $expr_dir/gemma_files/$gender.$gene.gemma.$type.treatment.bed
+		cp $covar_dir/$gender.gene.plink/$gene.$gender.treatment.$type.bim $expr_dir/gemma_files/$gender.$gene.gemma.$type.treatment.bim
+
+		#call function that combines expr info into fam file for non-treatment and treatment 
+		python fam_prep.py $pheno_file_no_treatment $covar_dir/$gender.gene.plink/$gene.$gender.no.treatment.$type.fam $expr_dir/gemma_files/$gender.$gene.gemma.$type.no.treatment.fam
+		python fam_prep.py $pheno_file_treatment $covar_dir/$gender.gene.plink/$gene.$gender.treatment.$type.fam $expr_dir/gemma_files/$gender.$gene.gemma.$type.treatment.fam		
+		
+
+		#run eQTL analysis for treatment and non-treatment group
+		gemma	-bfile $expr_dir/gemma_files/$gender.$gene.gemma.$type.no.treatment \
+               		-k $grm_dir/$gender.$type.no.treatment.new.gemma.grm \
+			-km 2 \
+			-lmm 4 \
+			-o eQTL.$gender.$gene.$type.no.treatment.gemma
+        	sleep 1
+		gemma	-bfile $expr_dir/gemma_files/$gender.$gene.gemma.$type.treatment \
+                	-k $grm_dir/$gender.$type.treatment.new.gemma.grm \
+			-km 2 \
+			-lmm 4 \
+			-o eQTL.$gender.$gene.$type.treatment.gemma
+		sleep 1
+		
+	done
+done
+	
+Move files to de_analysis_newgrm folder
+cp /scratch/mconery/sex-specific/scripts/output/eQTL.$gender.*.treatment.gemma.assoc.txt /scratch/mconery/sex-specific/eQTL_analysis
+
