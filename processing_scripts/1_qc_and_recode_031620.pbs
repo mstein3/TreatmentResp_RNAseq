@@ -1,0 +1,76 @@
+#!/bin/bash
+
+###############################
+
+# Resource Manager Directives #
+
+###############################
+
+#PBS -N 1_qc_and_recode_031620
+
+#PBS -S /bin/bash
+#PBS -l walltime=10:00:00
+
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=7gb
+
+#PBS -o 1_qc_and_recode_031620.log
+
+#PBS -e 1_qc_and_recode_031620.err
+
+#PBS -M mconery@uchicago.edu
+
+#################
+
+# Job Execution #
+
+#################
+
+
+export TMPDIR=$WORKDIR
+cd $PBS_O_WORKDIR
+export TEMP=$WORKDIR
+
+module load gcc/6.2.0
+module load plink/1.90
+module load python/3.6.0
+module load R/3.6.1
+
+
+#First Chunk converts pgen to bed files without removing dup ids
+
+#Define variable names
+inp_dir=/scratch/mconery/sex-specific/raw_data
+filter_dir=/scratch/mconery/sex-specific/filters
+grm_dir=/scratch/mconery/sex-specific/GRMs
+out_dir=/scratch/mconery/sex-specific/qual_controlled
+final_dir=/scratch/mconery/sex-specific/processed_data
+
+#Run GRM making scripts (Commmented out for a rerun)
+#Rscript prep_grms_gemma.R
+
+#Repeat process for both genders and for both X and autosomes
+for gender in males females; do
+	for type in X auto; do
+
+		#QC and filter for all iids in the 66/46 counts
+		plink --bfile $inp_dir/imputed-override --hwe 0.0001 --maf 0.05 --geno 0.05 --keep $filter_dir/$gender.iids.txt --recode --out $out_dir/Hutterite.$gender.qc.$type
+	
+		#Define names for processed files
+		ped_loc_com=$out_dir/Hutterite.$gender.qc.$type.ped
+		map_loc_com=$out_dir/Hutterite.$gender.qc.$type.map
+		pheno_loc_com=$final_dir/$gender.Pheno.Rready.nullLPS.7M.031520.txt
+		write_loc_com=$final_dir/Hutterite.$gender.process.$type.ped
+
+		#Copy and rename map file
+		cp $map_loc_com $final_dir
+		mv $final_dir/Hutterite.$gender.qc.$type.map $final_dir/Hutterite.$gender.process.$type.map
+
+		#Call python script
+		python ped_prep_QC.py $ped_loc_com $pheno_loc_com $write_loc_com	
+
+		#Recode back to bed file and filter for individuals in the grm overlap
+		plink --file $final_dir/Hutterite.$gender.process.$type --keep $filter_dir/$gender.$type.iids.txt --make-bed --out $final_dir/Hutterite.$gender.process.$type
+
+	done
+done
